@@ -598,7 +598,6 @@ static int stm32_load_fw_from_fota(struct stm32_dev *stm32, u8 ed_id)
 {
 	struct firmware *fw;
 	struct file *fp;
-	mm_segment_t old_fs;
 	long fw_size, nread;
 	int error = 0;
 	char fw_path[128] = { 0 };
@@ -611,9 +610,6 @@ static int stm32_load_fw_from_fota(struct stm32_dev *stm32, u8 ed_id)
 		input_err(true, &stm32->client->dev, "%s: wrong ed_id %d\n", __func__, ed_id);
 		return -EINVAL;
 	}
-
-	old_fs = get_fs();
-	set_fs(KERNEL_DS);
 
 	snprintf(fw_path, sizeof(fw_path), "%s/%s%s.bin",
 			STM32_FOTA_BIN_PATH, stm32->dtdata->model_name[stm32->ic_fw_ver.model_id],
@@ -654,7 +650,6 @@ static int stm32_load_fw_from_fota(struct stm32_dev *stm32, u8 ed_id)
 err_get_size:
 	filp_close(fp, NULL);
 err_open:
-	set_fs(old_fs);
 	return error;
 }
 

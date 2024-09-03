@@ -1041,14 +1041,10 @@ err_request_fw:
 static int stm32_dev_firmware_update_external(struct stm32_dev *data)
 {
 	struct file *fp;
-	mm_segment_t old_fs;
 	long fw_size, nread;
 	int result = -1;
 	int ii = 0;
 	int ret = 0;
-
-	old_fs = get_fs();
-	set_fs(KERNEL_DS);
 
 	input_info(true, &data->client->dev, "%s start\n", __func__);
 
@@ -1124,7 +1120,6 @@ err_mcu_validation:
 err_vzalloc:
 	filp_close(fp, NULL);
 err_open:
-	set_fs(old_fs);
 	enable_irq(data->client->irq);
 	return result;
 }
